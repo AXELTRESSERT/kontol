@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cek nama</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #0a0a0a;
+            color: #00ff00;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        .container {
+            background-color: rgba(10, 10, 10, 0.8);
+            padding: 30px;
+            border-radius: 5px;
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            z-index: 10;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: normal;
+            font-size: 24px;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00ff00;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            border-radius: 3px;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #003300;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover {
+            background-color: #006600;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 3px;
+            text-align: center;
+            display: none;
+            border: 1px solid;
+            font-weight: bold;
+        }
+        
+        .cowok {
+            background-color: rgba(0, 50, 0, 0.3);
+            color: #00ff00;
+            border-color: #00ff00;
+        }
+        
+        .cewek {
+            background-color: rgba(50, 0, 0, 0.3);
+            color: #ff0066;
+            border-color: #ff0066;
+        }
+        
+        .hacker-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            flex-direction: column;
+        }
+        
+        .hacker-text {
+            font-size: 18px;
+            color: #00ff00;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background-color: #003300;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background-color: #00ff00;
+            animation: load 5s linear forwards;
+        }
+        
+        @keyframes load {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .binary-code {
+            position: absolute;
+            color: #00ff00;
+            font-size: 12px;
+            opacity: 0.7;
+            user-select: none;
+        }
+        
+        /* Efek khusus untuk tombol saat ditekan */
+        .button-hack {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .button-hack::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.4), transparent);
+            transition: 0.5s;
+        }
+        
+        .button-hack:active::before {
+            left: 100%;
+        }
+        
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff00, transparent);
+            animation: scan 0.8s linear;
+            display: none;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch-text::before {
+            left: 2px;
+            text-shadow: -1px 0 red;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        
+        .glitch-text::after {
+            left: -2px;
+            text-shadow: -1px 0 blue;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-anim {
+            0% { clip: rect(42px, 9999px, 44px, 0); }
+            5% { clip: rect(12px, 9999px, 59px, 0); }
+            10% { clip: rect(48px, 9999px, 29px, 0); }
+            15% { clip: rect(42px, 9999px, 73px, 0); }
+            20% { clip: rect(63px, 9999px, 27px, 0); }
+            25% { clip: rect(34px, 9999px, 55px, 0); }
+            30% { clip: rect(86px, 9999px, 73px, 0); }
+            35% { clip: rect(20px, 9999px, 20px, 0); }
+            40% { clip: rect(26px, 9999px, 60px, 0); }
+            45% { clip: rect(25px, 9999px, 66px, 0); }
+            50% { clip: rect(57px, 9999px, 98px, 0); }
+            55% { clip: rect(5px, 9999px, 46px, 0); }
+            60% { clip: rect(82px, 9999px, 31px, 0); }
+            65% { clip: rect(54px, 9999px, 27px, 0); }
+            70% { clip: rect(28px, 9999px, 99px, 0); }
+            75% { clip: rect(45px, 9999px, 69px, 0); }
+            80% { clip: rect(23px, 9999px, 85px, 0); }
+            85% { clip: rect(54px, 9999px, 84px, 0); }
+            90% { clip: rect(45px, 9999px, 47px, 0); }
+            95% { clip: rect(37px, 9999px, 20px, 0); }
+            100% { clip: rect(4px, 9999px, 91px, 0); }
+        }
+        
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            5% { clip: rect(52px, 9999px, 74px, 0); }
+            10% { clip: rect(79px, 9999px, 85px, 0); }
+            15% { clip: rect(75px, 9999px, 5px, 0); }
+            20% { clip: rect(67px, 9999px, 61px, 0); }
+            25% { clip: rect(14px, 9999px, 79px, 0); }
+            30% { clip: rect(1px, 9999px, 66px, 0); }
+            35% { clip: rect(86px, 9999px, 30px, 0); }
+            40% { clip: rect(23px, 9999px, 98px, 0); }
+            45% { clip: rect(85px, 9999px, 72px, 0); }
+            50% { clip: rect(71px, 9999px, 75px, 0); }
+            55% { clip: rect(2px, 9999px, 48px, 0); }
+            60% { clip: rect(30px, 9999px, 16px, 0); }
+            65% { clip: rect(59px, 9999px, 50px, 0); }
+            70% { clip: rect(41px, 9999px, 62px, 0); }
+            75% { clip: rect(2px, 9999px, 82px, 0); }
+            80% { clip: rect(47px, 9999px, 73px, 0); }
+            85% { clip: rect(3px, 9999px, 27px, 0); }
+            90% { clip: rect(26px, 9999px, 55px, 0); }
+            95% { clip: rect(42px, 9999px, 97px, 0); }
+            100% { clip: rect(38px, 9999px, 49px, 0); }
+        }
+        
+        .terminal-output {
+            background: #000;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin-top: 10px;
+            height: 100px;
+            overflow-y: auto;
+            font-size: 12px;
+            display: none;
+        }
+        
+        .terminal-line {
+            margin-bottom: 5px;
+        }
+        
+        .prompt {
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+    
+    <div class="hacker-effect" id="hackerEffect">
+        <div class="hacker-text blink">initializing system...</div>
+        <div class="hacker-text">accessing name database...</div>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+    </div>
+    
+    <div class="container" id="mainContainer" style="display: none;">
+        <h1 class="glitch-text" data-text="cek nama">cek nama</h1>
+        <div class="input-group">
+            <label for="nama">nama:</label>
+            <input type="text" id="nama" placeholder="masukkan nama">
+        </div>
+        <button id="cek" class="button-hack">
+            <span>cek</span>
+            <div class="scan-line" id="scanLine"></div>
+        </button>
+        <div id="hasil" class="result"></div>
+        <div id="terminal" class="terminal-output"></div>
+    </div>
+
+    <script>
+        // Efek hacker selama 5 detik
+        setTimeout(function() {
+            document.getElementById('hackerEffect').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'block';
+        }, 5000);
+        
+        // Efek matrix background
+        function createMatrixEffect() {
+            const bg = document.getElementById('matrixBg');
+            const chars = "01";
+            const fontSize = 14;
+            const columns = Math.floor(window.innerWidth / fontSize);
+            
+            // Buat kolom
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.className = 'binary-code';
+                column.style.left = (i * fontSize) + 'px';
+                column.style.animationDelay = (Math.random() * 5) + 's';
+                bg.appendChild(column);
+                
+                // Isi kolom dengan karakter acak
+                let content = '';
+                const rows = Math.floor(window.innerHeight / fontSize);
+                for (let j = 0; j < rows; j++) {
+                    content += chars.charAt(Math.floor(Math.random() * chars.length)) + '<br>';
+                }
+                column.innerHTML = content;
+            }
+        }
+        
+        // Panggil efek matrix setelah halaman dimuat
+        window.addEventListener('load', createMatrixEffect);
+        
+        // Fungsi cek nama dengan efek hacker
+        document.getElementById('cek').addEventListener('click', function() {
+            const namaInput = document.getElementById('nama').value.trim();
+            const hasilDiv = document.getElementById('hasil');
+            const terminal = document.getElementById('terminal');
+            const scanLine = document.getElementById('scanLine');
+            
+            if (namaInput === '') {
+                alert('tolong isi nama dulu');
+                return;
+            }
+            
+            // Tampilkan efek scan line
+            scanLine.style.display = 'block';
+            setTimeout(() => {
+                scanLine.style.display = 'none';
+            }, 800);
+            
+            // Tampilkan terminal output
+            terminal.style.display = 'block';
+            terminal.innerHTML = '';
+            
+            // Simulasi proses hacking
+            const messages = [
+                `> scanning target: ${namaInput}`,
+                '> accessing biometric database...',
+                '> analyzing name patterns...',
+                '> cross-referencing with gender database...',
+                '> calculating probabilities...',
+                '> generating result...'
+            ];
+            
+            let delay = 0;
+            messages.forEach((msg, index) => {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-line';
+                    line.innerHTML = `<span class="prompt">$</span> ${msg}`;
+                    terminal.appendChild(line);
+                    terminal.scrollTop = terminal.scrollHeight;
+                    
+                    // Pada pesan terakhir, tampilkan hasil
+                    if (index === messages.length - 1) {
+                        setTimeout(() => {
+                            // Acak hasil antara "cowok dia bre" dan "cewek"
+                            const hasil = Math.random() < 0.5 ? "cowok dia bre" : "cewek";
+                            
+                            // Tampilkan hasil
+                            hasilDiv.textContent = hasil;
+                            hasilDiv.className = 'result ' + (hasil === "cowok dia bre" ? 'cowok' : 'cewek');
+                            hasilDiv.style.display = 'block';
+                            
+                            // Tambahkan hasil ke terminal
+                            const resultLine = document.createElement('div');
+                            resultLine.className = 'terminal-line';
+                            resultLine.innerHTML = `<span class="prompt">></span> result: <strong>${hasil}</strong>`;
+                            terminal.appendChild(resultLine);
+                            terminal.scrollTop = terminal.scrollHeight;
+                        }, 500);
+                    }
+                }, delay);
+                delay += 600;
+            });
+        });
+    </script>
+</body>
+</html>
